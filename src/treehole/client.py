@@ -1,22 +1,16 @@
 import logging
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, Optional, Union
 
 import requests
 from requests.compat import urlencode, urljoin
 
-from .models import AttentionHole, Comment, Hole, ListHole
+from .models import AttentionHole, Comment, Hole, ListHole, GenericHole
 
-GenericHole = TypeVar("GenericHole", Hole, ListHole, AttentionHole)
 
 logger = logging.getLogger("pyTreeHole")
 
 
-class Actions:
-    GET_ONE: str = "getone"
-    GET_COMMENT: str = "getcomment"
-    GET_LIST: str = "getlist"
-    GET_ATTENTION: str = "getattention"
-    SEARCH: str = "search"
+__all__ = ["Client"]
 
 
 BASE_URL = "https://pkuhelper.pku.edu.cn/services/pkuhole/api.php"
@@ -131,6 +125,23 @@ class Client:
             return False
         return True
 
+    def get_hole_image(
+        self, hole: GenericHole
+    ) -> Union[tuple[bytes, str], tuple[None, None]]:
+        """
+        获取树洞图片
+
+        :param hole: 树洞
+        :return: 图片二进制数据和图片类型
+        """
+        if hole.type == "image":
+            assert hole.url is not None
+            response = requests.get(hole.url, headers=self.__header)
+            if self.__is_valid_response(response):
+                return response.content, response.headers["Content-Type"]
+            return (None, None)
+        return (None, None)
+
     def get_comment(
         self, pid: Union[int, str]
     ) -> Union[tuple[list[Comment], int], tuple[None, None]]:
@@ -145,7 +156,7 @@ class Client:
             raise ValueError("pid must be an integer or string of interger")
         query = {
             **self.__base_query,
-            **{"action": Actions.GET_COMMENT, "pid": str(pid)},
+            **{"action": "getcomment", "pid": str(pid)},
         }
         url = f"{BASE_URL}?{urlencode(query)}"
         response = requests.get(url, headers=self.__header)
@@ -173,7 +184,7 @@ class Client:
             raise ValueError("pid must be an integer or string of interger")
         query = {
             **self.__base_query,
-            **{"action": Actions.GET_ONE, "pid": str(pid)},
+            **{"action": "getone", "pid": str(pid)},
         }
         url = f"{BASE_URL}?{urlencode(query)}"
         response = requests.get(url, headers=self.__header)
@@ -200,7 +211,7 @@ class Client:
             raise ValueError("page must be an integer or string of interger")
         query = {
             **self.__base_query,
-            **{"action": Actions.GET_LIST, "p": str(page)},
+            **{"action": "getlist", "p": str(page)},
         }
         url = f"{BASE_URL}?{urlencode(query)}"
         response = requests.get(url, headers=self.__header)
@@ -227,7 +238,7 @@ class Client:
             raise ValueError("page must be an integer or string of interger")
         query = {
             **self.__base_query,
-            **{"action": Actions.GET_ATTENTION, "p": str(page)},
+            **{"action": "getattention", "p": str(page)},
         }
         url = f"{BASE_URL}?{urlencode(query)}"
         response = requests.get(url, headers=self.__header)
@@ -263,7 +274,7 @@ class Client:
         query = {
             **self.__base_query,
             **{
-                "action": Actions.SEARCH,
+                "action": "search",
                 "keywords": " ".join(keywords),
                 "page": str(page),
                 "pagesize": str(page_size),

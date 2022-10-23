@@ -11,6 +11,8 @@ print("Get Hole")
 body, timestamp = client.get_hole(4226377)
 print("Body:", body)
 print("Timestamp:", timestamp)
+if body:
+    print("Image:", client.get_hole_image(body))
 
 print("Get Comments")
 comments, attention = client.get_comment(4224963)

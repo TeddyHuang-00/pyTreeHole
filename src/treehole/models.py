@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, Optional, TypeVar
 
-__all__ = ("Hole", "ListHole", "AttentionHole", "Comment")
+__all__ = ("Hole", "ListHole", "AttentionHole", "Comment", "GenericHole")
 
 
 @dataclass(init=True, repr=False, order=False, unsafe_hash=True, frozen=False)
@@ -187,3 +187,6 @@ class AttentionHole(Hole):
             tag=data["tag"],
             attention_tag=data["attention_tag"],
         )
+
+
+GenericHole = TypeVar("GenericHole", Hole, ListHole, AttentionHole)
