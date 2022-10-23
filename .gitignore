@@ -58,3 +58,4 @@ MANIFEST
 
 # Temporary files
 **/tmp
+**/tmp.*
