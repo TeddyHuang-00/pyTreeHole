@@ -24,19 +24,19 @@ pip3 install TreeHole
 ```python
 from treehole import Client
 
-client = Client(<Your token>)
+client = Client(<Your Token>)
 # 获取单个树洞
 hole, timestamp = client.get_hole(<Hole ID>)
 # 获取树洞评论
 comments, attention = client.get_comment(<Hole ID>)
 # 获取首页树洞列表
-holes, timestamp = client.get_holes(<Page num>)
+holes, timestamp = client.get_holes(<Page Num>)
 # 获取关注树洞列表
-holes, timestamp = client.get_attention(<Page num>)
+holes, timestamp = client.get_attention(<Page Num>)
 # 切换关注状态
 success, attention = client.post_toggle_attention(<Hole ID>)
 # 发布树洞
-pid = client.post_hole(<Text>, <Image file>)
+pid = client.post_hole(<Text>, <Image File>)
 # 发布评论
 pid = client.post_comment(<Hole ID>, <Text>, <Reply To>)
 # 举报树洞 (!!!!!! 请勿轻易尝试)
