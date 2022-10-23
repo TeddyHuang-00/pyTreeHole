@@ -1,11 +1,11 @@
+from base64 import b64encode
 import logging
 from typing import Any, Optional, Union
 
 import requests
 from requests.compat import urlencode, urljoin
 
-from .models import AttentionHole, Comment, Hole, ListHole, GenericHole
-
+from .models import AttentionHole, Comment, GenericHole, Hole, ListHole, UserName
 
 logger = logging.getLogger("pyTreeHole")
 
@@ -37,6 +37,10 @@ BASE_QUERY = {
 
 class CaptchaError(Exception):
     """用户可能需要验证"""
+
+
+class EmptyError(Exception):
+    """没有数据"""
 
 
 class Client:
@@ -111,19 +115,13 @@ class Client:
 
     @staticmethod
     def __is_valid_json_code(response: dict[str, Any]) -> bool:
-        if response["code"] != 0:
-            # TODO: To be tested for exact error
-            logger.error("Failed to get comment, response: %s", response)
-            return False
-        return True
+        # TODO: To be tested for exact error
+        return response["code"] == 0
 
     @staticmethod
     def __is_valid_json_captcha(response: dict[str, Any]) -> bool:
-        if response["captcha"]:
-            # TODO: To be tested for exact error
-            logger.warning("Captcha might be required, response: %s", response)
-            return False
-        return True
+        # TODO: To be tested for exact error
+        return not response["captcha"]
 
     def get_hole_image(
         self, hole: GenericHole
@@ -164,8 +162,10 @@ class Client:
             return (None, None)
         response_dict = response.json()
         if not self.__is_valid_json_code(response_dict):
+            logger.error("Failed to get comment, response: %s", response_dict)
             return (None, None)
         if not self.__is_valid_json_captcha(response_dict):
+            logger.warning("Captcha might be required, response: %s", response_dict)
             raise CaptchaError("Captcha might be required")
         return [
             Comment.from_data(comment) for comment in response_dict["data"]
@@ -192,6 +192,7 @@ class Client:
             return (None, None)
         response_dict = response.json()
         if not self.__is_valid_json_code(response_dict):
+            logger.error("Failed to get hole, response: %s", response_dict)
             return (None, None)
         return (
             self.__process_image_url(Hole.from_data(response_dict["data"])),
@@ -219,6 +220,7 @@ class Client:
             return (None, None)
         response_dict = response.json()
         if not self.__is_valid_json_code(response_dict):
+            logger.error("Failed to get hole list, response: %s", response_dict)
             return (None, None)
         return [
             self.__process_image_url(ListHole.from_data(hole))
@@ -246,13 +248,16 @@ class Client:
             return (None, None)
         response_dict = response.json()
         if not self.__is_valid_json_code(response_dict):
+            logger.error(
+                "Failed to get attention hole list, response: %s", response_dict
+            )
             return (None, None)
         return [
             self.__process_image_url(AttentionHole.from_data(hole))
             for hole in response_dict["data"]
         ], response_dict["timestamp"]
 
-    def search(
+    def get_search(
         self,
         keywords: Union[str, list[str]],
         page: Union[int, str] = 1,
@@ -286,8 +291,228 @@ class Client:
             return None
         response_dict = response.json()
         if not self.__is_valid_json_code(response_dict):
+            logger.error("Failed to get resource, response: %s", response_dict)
             return None
         return [
             self.__process_image_url(Hole.from_data(hole))
             for hole in response_dict["data"]
         ]
+
+    def post_hole(
+        self, text: str = "", image: Optional[Union[bytes, str]] = None
+    ) -> Optional[int]:
+        """
+        发布树洞
+
+        :param content: 树洞内容
+        :param image: 树洞图片 (文件名或二进制数据)
+        :return: 洞号 (失败则返回 None)
+        """
+        if not text and not image:
+            raise EmptyError("Empty post is not allowed")
+        if image is not None:
+            if isinstance(image, str):
+                try:
+                    image = open(image, "rb").read()
+                except FileNotFoundError:
+                    logger.error(f"File {image} not found")
+                    raise FileNotFoundError("File not found")
+                except Exception as e:
+                    logger.error(f"Unknown error: {e}")
+                    raise e
+            # load for posting hole with image
+            load = {
+                "user_token": self.__base_query["user_token"],
+                "text": text,
+                "type": "image",
+                "image": b64encode(image).decode("utf-8"),
+            }
+        else:
+            load = {
+                "user_token": self.__base_query["user_token"],
+                "text": text,
+                "type": "text",
+            }
+        query = {
+            **self.__base_query,
+            **{
+                "action": "dopost",
+            },
+        }
+        url = f"{BASE_URL}?{urlencode(query)}"
+        response = requests.post(url, headers=self.__header, data=load)
+        if not self.__is_valid_response(response):
+            return None
+        response_dict = response.json()
+        if not self.__is_valid_json_code(response_dict):
+            logger.exception("Post failed: %s", response_dict["msg"])
+            return None
+        return int(response_dict["data"])
+
+    def post_comment(
+        self,
+        pid: Union[int, str],
+        text: str,
+        reply_to: Optional[Union[int, str]] = None,
+    ) -> Optional[int]:
+        """
+        发布评论
+
+        :param pid: 树洞号
+        :param text: 评论内容
+        :param reply_to: 回复的用户 (默认为回复洞主)
+        :return: 树洞号 (失败则返回 None)
+        """
+        if not text:
+            raise EmptyError("Empty post is not allowed")
+        if not self.__is_num(pid):
+            raise ValueError("pid must be an integer or string of interger")
+        if reply_to is not None:
+            if isinstance(reply_to, str):
+                assert reply_to in UserName, "Invalid reply_to"
+                reply_to = " ".join([x.capitalize() for x in reply_to.split()])
+            else:
+                reply_to = UserName[reply_to]
+            text = f"Re {reply_to}: {text}"
+        load = {
+            "user_token": self.__base_query["user_token"],
+            "pid": str(pid),
+            "text": text,
+        }
+        query = {
+            **self.__base_query,
+            **{
+                "action": "docomment",
+            },
+        }
+        url = f"{BASE_URL}?{urlencode(query)}"
+        response = requests.post(url, headers=self.__header, data=load)
+        if not self.__is_valid_response(response):
+            return None
+        response_dict = response.json()
+        if not self.__is_valid_json_code(response_dict):
+            logger.exception("Comment failed: %s", response_dict["msg"])
+            return None
+        # Note that this return value is pid, not cid
+        # Cannot help with that
+        return int(response_dict["data"])
+
+    def post_set_attention(self, pid: Union[int, str]) -> bool:
+        """
+        关注树洞
+
+        :param pid: 树洞号
+        :return: 是否关注成功 (已经订阅的树洞返回 False)
+        """
+        if not self.__is_num(pid):
+            raise ValueError("pid must be an integer or string of interger")
+        load = {
+            "user_token": self.__base_query["user_token"],
+            "pid": str(pid),
+            "switch": "1",
+        }
+        query = {
+            **self.__base_query,
+            **{
+                "action": "attention",
+            },
+        }
+        url = f"{BASE_URL}?{urlencode(query)}"
+        response = requests.post(url, headers=self.__header, data=load)
+        if not self.__is_valid_response(response):
+            return False
+        response_dict = response.json()
+        if not self.__is_valid_json_code(response_dict):
+            logger.exception("Subscribe failed: %s", response_dict["msg"])
+            # TODO: Test if error would occur other than already subscribed
+            return False
+        return True
+
+    def post_remove_attention(self, pid: Union[int, str]) -> bool:
+        """
+        取消关注树洞
+
+        :param pid: 树洞号
+        :return: 是否取关成功 (未关注的树洞也返回 True)
+        """
+        if not self.__is_num(pid):
+            raise ValueError("pid must be an integer or string of interger")
+        load = {
+            "user_token": self.__base_query["user_token"],
+            "pid": str(pid),
+            "switch": "0",
+        }
+        query = {
+            **self.__base_query,
+            **{
+                "action": "attention",
+            },
+        }
+        url = f"{BASE_URL}?{urlencode(query)}"
+        response = requests.post(url, headers=self.__header, data=load)
+        if not self.__is_valid_response(response):
+            return False
+        response_dict = response.json()
+        if not self.__is_valid_json_code(response_dict):
+            logger.exception("Subscribe failed: %s", response_dict["msg"])
+            # TODO: Test if error would occur other than already subscribed
+            return False
+        return True
+
+    def post_toggle_attention(
+        self, pid: Union[int, str], two_factor: bool = False
+    ) -> Union[tuple[bool, Optional[int]], tuple[None, None]]:
+        """
+        切换关注状态
+
+        :param pid: 树洞号
+        :param two_factor: 是否二次验证 (默认 False)
+        :return: 是否切换成功，当前关注状态
+        """
+        _, attention = self.get_comment(pid)
+        if attention is None:
+            logger.exception("Failed to get attention status of pid %s", pid)
+            return (None, None)
+        if attention:
+            success = self.post_remove_attention(pid)
+        else:
+            success = self.post_set_attention(pid)
+        if not two_factor:
+            return (success, ((1 - attention) if success else attention))
+        _, attention = self.get_comment(pid)
+        if attention is None:
+            logger.exception("Failed to get attention status of pid %s", pid)
+            return (success, None)
+        return success, attention
+
+    def post_report(self, pid: Union[int, str], reason: str = "") -> bool:
+        """
+        举报树洞
+
+        :param pid: 树洞号
+        :param reason: 举报理由
+
+        :return: 发送成功与否
+        """
+        if not self.__is_num(pid):
+            raise ValueError("pid must be an integer or string of interger")
+        load = {
+            "user_token": self.__base_query["user_token"],
+            "pid": str(pid),
+            "reason": reason,
+        }
+        query = {
+            **self.__base_query,
+            **{
+                "action": "report",
+            },
+        }
+        url = f"{BASE_URL}?{urlencode(query)}"
+        response = requests.post(url, headers=self.__header, data=load)
+        if not self.__is_valid_response(response):
+            return False
+        response_dict = response.json()
+        if not self.__is_valid_json_code(response_dict):
+            logger.exception("Report failed: %s", response_dict["msg"])
+            return False
+        return True

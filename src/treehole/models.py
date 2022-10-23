@@ -303,5 +303,11 @@ class UserName(metaclass=UserNameMeta):
     """
     用户名数据模型
 
-    :param name: 用户名
+    用法：
+
+    ```python
+    "Angry alice" in UserName # True
+    UserName[48]     # "Angry Winnie"
+    UserName["You Win 1234"]  # 1234
+    ```
     """
