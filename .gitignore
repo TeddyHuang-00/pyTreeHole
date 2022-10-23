@@ -55,3 +55,6 @@ MANIFEST
 
 # Secrets for testing only
 **/secrets.json
+
+# Temporary files
+**/tmp
