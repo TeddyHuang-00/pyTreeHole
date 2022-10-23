@@ -2,6 +2,13 @@
 
 > A simple Python interface to PKU Tree Hole
 
+![PyPI - Version](https://img.shields.io/pypi/v/treehole?color=2e86de&label=version&logo=pypi&logoColor=74b9ff&style=for-the-badge)
+![PyPI - Version](https://img.shields.io/github/last-commit/TeddyHuang-00/pyTreeHole?color=c0392b&logo=git&style=for-the-badge)
+
+![PyPI - Downloads per day](https://img.shields.io/pypi/dd/TreeHole?color=1ee3cf&label=%20&style=for-the-badge)
+![PyPI - Downloads per week](https://img.shields.io/pypi/dw/TreeHole?color=6b48ff&label=%20&style=for-the-badge)
+![PyPI - Downloads per month](https://img.shields.io/pypi/dm/TreeHole?color=0d3f67&label=%20&style=for-the-badge)
+
 目前正在持续开发完善中，欢迎使用和提出建议！
 
 ## 亮点
@@ -10,6 +17,7 @@
 - token 登陆
 - 自动处理图像 url
 - 所有树洞数据模型均已封装为数据类
+- 涵盖(几乎？)所有暴露给用户的业务逻辑
 
 ## 安装
 
