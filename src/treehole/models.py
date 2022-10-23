@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional, TypeVar, Union
 
-__all__ = ("Hole", "ListHole", "AttentionHole", "Comment", "GenericHole")
+__all__ = ("Hole", "ListHole", "AttentionHole", "Comment", "GenericHole", "UserName")
 
 
 @dataclass(init=True, repr=False, order=False, unsafe_hash=True, frozen=False)
@@ -190,3 +190,118 @@ class AttentionHole(Hole):
 
 
 GenericHole = TypeVar("GenericHole", Hole, ListHole, AttentionHole)
+
+
+class UserNameMeta(type):
+    prefixes = [
+        "",
+        "Angry",
+        "Baby",
+        "Crazy",
+        "Diligent",
+        "Excited",
+        "Fat",
+        "Greedy",
+        "Hungry",
+        "Interesting",
+        "Jolly",
+        "Kind",
+        "Little",
+        "Magic",
+        "Naïve",
+        "Old",
+        "Powerful",
+        "Quiet",
+        "Rich",
+        "Superman",
+        "THU",
+        "Undefined",
+        "Valuable",
+        "Wifeless",
+        "Xiangbuchulai",
+        "Young",
+        "Zombie",
+    ]
+    suffixes = [
+        "Alice",
+        "Bob",
+        "Carol",
+        "Dave",
+        "Eve",
+        "Francis",
+        "Grace",
+        "Hans",
+        "Isabella",
+        "Jason",
+        "Kate",
+        "Louis",
+        "Margaret",
+        "Nathan",
+        "Olivia",
+        "Paul",
+        "Queen",
+        "Richard",
+        "Susan",
+        "Thomas",
+        "Uma",
+        "Vivian",
+        "Winnie",
+        "Xander",
+        "Yasmine",
+        "Zach",
+    ]
+    overflow = "You Win"
+
+    def __contains__(cls, item: str) -> bool:
+        assert isinstance(item, str)
+        name_lst = item.split()
+        assert 1 <= len(name_lst) <= 3
+        if len(name_lst) == 1:
+            return name_lst[0].capitalize() in cls.suffixes
+        elif len(name_lst) == 2:
+            return (
+                name_lst[0].capitalize() in cls.prefixes
+                and name_lst[1].capitalize() in cls.suffixes
+            )
+        else:
+            return [
+                name_lst[0].capitalize(),
+                name_lst[1].capitalize(),
+            ] == cls.overflow.split() and name_lst[2].isdigit()
+
+    def __getitem__(cls, x: Union[int, str]) -> Union[str, int]:
+        if isinstance(x, int):
+            if x < len(cls.prefixes) * len(cls.suffixes):
+                if x < len(cls.suffixes):
+                    return (
+                        cls.prefixes[x // len(cls.suffixes)]
+                        + cls.suffixes[x % len(cls.suffixes)]
+                    )
+                else:
+                    return (
+                        cls.prefixes[x // len(cls.suffixes)]
+                        + " "
+                        + cls.suffixes[x % len(cls.suffixes)]
+                    )
+            else:
+                return cls.overflow + " " + str(x)
+        elif isinstance(x, str):
+            if not x in cls:
+                raise ValueError(f"Invalid user name: {x}")
+            name_lst = x.split()
+            if len(name_lst) == 1:
+                return cls.suffixes.index(name_lst[0].capitalize())
+            elif len(name_lst) == 2:
+                return cls.prefixes.index(name_lst[0].capitalize()) * len(
+                    cls.suffixes
+                ) + cls.suffixes.index(name_lst[1].capitalize())
+            else:
+                return int(name_lst[2])
+
+
+class UserName(metaclass=UserNameMeta):
+    """
+    用户名数据模型
+
+    :param name: 用户名
+    """

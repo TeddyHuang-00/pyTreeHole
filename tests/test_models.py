@@ -57,3 +57,16 @@ data = {
 }
 
 print("Comment", Comment.from_data(data))
+
+assert ("Angry Alice" in UserName) == True
+assert ("alice" in UserName) == True
+assert ("a_lice" in UserName) == False
+assert ("you win 1234" in UserName) == True
+assert ("you win a234" in UserName) == False
+
+assert UserName["you win 1234"] == 1234
+assert UserName[1234] == "You Win 1234"
+assert UserName["angry alice"] == 26
+assert UserName[48] == "Angry Winnie"
+assert UserName[17] == "Richard"
+assert UserName["zach"] == 25
