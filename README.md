@@ -1,8 +1,15 @@
 # TreeHole
 
-> Simple Python interface to PKU Tree Hole
+> A simple Python interface to PKU Tree Hole
 
-目前正在持续开发完善中，欢迎尝试使用和提出建议！
+目前正在持续开发完善中，欢迎使用和提出建议！
+
+## 亮点
+
+- 简单易用
+- token 登陆
+- 自动处理图像 url
+- 所有树洞数据模型均已封装为数据类
 
 ## 安装
 
@@ -17,10 +24,18 @@ pip3 install TreeHole
 ```python
 from treehole import Client
 
-...
+client = Client(<Your token>)
+# 获取单个树洞
+hole, timestamp = client.get_hole(<Hole ID>)
+# 获取树洞评论
+comments, attention = client.get_comment(<Hole ID>)
+# 获取首页树洞列表
+holes, timestamp = client.get_holes(<Page num>)
+# 获取关注树洞列表
+holes, timestamp = client.get_attention(<Page num>)
 ```
 
-详情请参考 [example](./tests/sample.py)
+用例请参考 [example](./tests/sample.py)
 
 ## 开发
 
@@ -37,3 +52,17 @@ pip3 install -e ".[test]"
 ```
 
 欢迎提 issues 与 PR！
+
+## Roadmap
+
+- [x] 树洞数据模型
+- [x] 获取单个树洞
+- [x] 获取首页树洞
+- [x] 获取关注树洞
+- [x] 获取树洞回复
+- [x] 客户端封装
+- [ ] 异步支持
+  - 目前看来单个任务速度较快，如有明确需求再考虑添加
+- [ ] 更多交互功能
+  - POST 方法相关（关注、回复、发树洞等）
+- [ ] ...
