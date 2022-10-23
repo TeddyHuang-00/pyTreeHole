@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TreeHole"
-version = "0.0.2"
+version = "0.0.3"
 authors = [{ name = "TeddyHuang-00", email = "huang_nan_2019@pku.edu.cn" }]
 description = "A Python interface to PKU Hole!"
 readme = "README.md"
