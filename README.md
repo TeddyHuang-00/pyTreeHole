@@ -33,6 +33,14 @@ comments, attention = client.get_comment(<Hole ID>)
 holes, timestamp = client.get_holes(<Page num>)
 # 获取关注树洞列表
 holes, timestamp = client.get_attention(<Page num>)
+# 切换关注状态
+success, attention = client.post_toggle_attention(<Hole ID>)
+# 发布树洞
+pid = client.post_hole(<Text>, <Image file>)
+# 发布评论
+pid = client.post_comment(<Hole ID>, <Text>, <Reply To>)
+# 举报树洞 (!!!!!! 请勿轻易尝试)
+success = client.post_report(<Hole ID>)
 ```
 
 用例请参考 [example](./tests/sample.py)
@@ -56,13 +64,17 @@ pip3 install -e ".[test]"
 ## Roadmap
 
 - [x] 树洞数据模型
+- [x] 客户端封装
 - [x] 获取单个树洞
 - [x] 获取首页树洞
 - [x] 获取关注树洞
 - [x] 获取树洞回复
-- [x] 客户端封装
+- [x] 关注/取关树洞
+- [x] 回复树洞
+- [x] 发布树洞
+- [x] 举报树洞
 - [ ] 异步支持
   - 目前看来单个任务速度较快，如有明确需求再考虑添加
 - [ ] 更多交互功能
-  - POST 方法相关（关注、回复、发树洞等）
+  - 待补充 ...
 - [ ] ...
