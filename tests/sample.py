@@ -1,4 +1,4 @@
-from treehole import Client
+from treehole import TreeHoleClient
 
 token = input("Input token: ")
 if len(token) != 32:
@@ -16,7 +16,7 @@ def img_filter(hole):
     return len(hole.url) > 0
 
 
-client = Client(token)
+client = TreeHoleClient(token)
 idx = 1
 holes, _ = client.get_holes(idx)
 while not holes:
