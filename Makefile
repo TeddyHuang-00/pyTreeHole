@@ -48,4 +48,4 @@ clean:
 docs-clean:
 	- rm -rf $(DOC_DIR)
 
-.PHONY: clean build rebuild test-publish publish docs docs-dev docs-publish
+.PHONY: build rebuild test-publish publish run-tests docs docs-dev docs-publish clean docs-clean
