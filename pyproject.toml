@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TreeHole"
-version = "1.1.0"
+version = "1.1.0.post1"
 authors = [{ name = "TeddyHuang-00", email = "huang_nan_2019@pku.edu.cn" }]
 description = "A Python interface to PKU Hole!"
 readme = "README.md"
@@ -19,6 +19,8 @@ dependencies = ["requests", "aiohttp", "aiofiles"]
 [project.urls]
 "Homepage" = "https://github.com/TeddyHuang-00/pyTreeHole"
 "Bug Tracker" = "https://github.com/TeddyHuang-00/pyTreeHole/issues"
+"Documentation" = "https://teddyhuang-00.github.io/pyTreeHole/"
+"Changelog" = "https://github.com/TeddyHuang-00/pyTreeHole/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 test = ["setuptools", "rich", "pytest", "pytest-asyncio", "pytest-json-report"]
