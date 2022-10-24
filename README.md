@@ -2,20 +2,23 @@
 
 > A simple Python interface to PKU Tree Hole
 
-[![Git - Last Doc Commit](https://img.shields.io/github/last-commit/TeddyHuang-00/pyTreeHole/gh-pages?color=a4b0be&logo=readthedocs&style=for-the-badge&label=documentation)](https://teddyhuang-00.github.io/pyTreeHole)
 [![GitHub - License](https://img.shields.io/github/license/TeddyHuang-00/pyTreeHole?color=f1f2f6&logo=github&style=for-the-badge)](https://github.com/TeddyHuang-00/pyTreeHole/blob/main/LICENSE.txt)
+[![Git - Last Doc Commit](https://img.shields.io/github/last-commit/TeddyHuang-00/pyTreeHole/gh-pages?color=a4b0be&logo=readthedocs&style=for-the-badge&label=documentation)](https://teddyhuang-00.github.io/pyTreeHole)
 
-[![PyPI - Version](https://img.shields.io/pypi/v/treehole?color=2980b9&label=version&logo=pytest&style=for-the-badge)](https://pypi.org/project/treehole/)
+[![PyPI - Version](https://img.shields.io/pypi/v/treehole?color=2980b9&label=version&logo=python&style=for-the-badge)](https://pypi.org/project/treehole/)
+[![PyPI - Downloads per month](https://img.shields.io/pypi/dm/TreeHole?color=01579b&label=downloads&logo=pypi&style=for-the-badge)](https://pypistats.org/packages/treehole)
+
+![Pytest - Result](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FTeddyHuang-00%2FpyTreeHole%2Fmain%2Ftests%2Ftest_result.json&color=0097e0&logo=pytest&style=for-the-badge)
 [![Git - Last Commit](https://img.shields.io/github/last-commit/TeddyHuang-00/pyTreeHole?color=c0392b&logo=git&style=for-the-badge)](https://github.com/TeddyHuang-00/pyTreeHole)
-
-[![PyPI - Downloads per month](https://img.shields.io/pypi/dm/TreeHole?color=01579b&label=pypi%20downloads&logo=pypi&style=for-the-badge)](https://pypistats.org/packages/treehole)
 
 目前正在持续开发完善中，欢迎使用和提出建议！
 
 ## 亮点
 
 - 简单易用
+- 文档齐全
 - token 登陆
+- 支持异步请求
 - 自动处理图像 url
 - 所有树洞数据模型均已封装为数据类
 - 涵盖(几乎？)所有暴露给用户的业务逻辑
@@ -82,8 +85,5 @@ pip3 install -e ".[test]"
 - [x] 回复树洞
 - [x] 发布树洞
 - [x] 举报树洞
-- [ ] 异步支持
-  - 目前看来单个任务速度较快，如有明确需求再考虑添加
-- [ ] 更多交互功能
-  - 待补充 ...
-- [ ] ...
+- [x] 支持异步处理
+- [ ] 更多功能待补充 ...
