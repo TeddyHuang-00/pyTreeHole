@@ -1,3 +1,7 @@
+"""
+树洞客户端，处理收发请求
+"""
+
 from base64 import b64encode
 from typing import Any, Optional, Union
 

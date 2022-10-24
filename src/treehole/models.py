@@ -1,18 +1,5 @@
 """
 树洞相关数据模型
-
-- 树洞类
-    - `Hole`
-        基本树洞类型
-    - `ListHole`
-        首页树洞类型（包含一些额外信息）
-    - `AttentionHole`
-        关注树洞类型（包含一些额外信息）
-    - `GenericHole`
-        泛树洞类型（用于类型注释）
-- 树洞评论类
-    - `Comment`
-        树洞回复类型
 """
 
 from dataclasses import dataclass
@@ -142,28 +129,10 @@ class Comment:
 @dataclass(init=True, repr=False, order=False, unsafe_hash=True, frozen=False)
 class ListHole(Hole):
     """
-    树洞数据模型（来自列表）
+    树洞数据模型（来自首页）
 
     Attributes
     ----------
-    pid: int | None
-        树洞 ID
-    timestamp: int | None
-        树洞创建时间戳
-    reply: int | None
-        树洞回复数
-    likenum: int | None
-        树洞关注数
-    type: str | None
-        树洞类型（目前已知仅有：`text` 和 `image` 两种类型）
-    text: str | None
-        树洞文本内容
-    url: str | None
-        树洞图片链接（仅当 `type` 为 `image` 时非空）
-    tag: str | None
-        树洞标签
-    extra: int | None
-        树洞额外信息（暂不确定其具体含义）
     hidden: int | None
         树洞是否被隐藏（0 为否，1 为是）
     hot: int | None
@@ -197,24 +166,6 @@ class AttentionHole(Hole):
 
     Attributes
     ----------
-    pid: int | None
-        树洞 ID
-    timestamp: int | None
-        树洞创建时间戳
-    reply: int | None
-        树洞回复数
-    likenum: int | None
-        树洞关注数
-    type: str | None
-        树洞类型（目前已知仅有：`text` 和 `image` 两种类型）
-    text: str | None
-        树洞文本内容
-    url: str | None
-        树洞图片链接（仅当 `type` 为 `image` 时非空）
-    tag: str | None
-        树洞标签
-    extra: int | None
-        树洞额外信息（暂不确定其具体含义）
     attention_tag: str | None
         关注标签（暂不确定其具体含义）
     """

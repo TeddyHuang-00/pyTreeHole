@@ -1,3 +1,7 @@
+"""
+辅助功能
+"""
+
 import logging
 
 
