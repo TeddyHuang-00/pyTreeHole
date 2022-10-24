@@ -1,6 +1,7 @@
 PY?=python3
 BUILD?=python3 -m build
 DOC?=pdoc
+TEST?=pytest
 
 DOC_BRANCH?=gh-pages
 DOC_PORT?=8000
@@ -26,6 +27,9 @@ test-publish: rebuild
 
 publish: rebuild
 	$(PY) -m twine upload --repository $(PUBLISH_SITE) $(OUTPUT_DIR)/*
+
+run-tests:
+	$(TEST) $(BASE_DIR)
 
 docs: docs-clean
 	$(DOC) --html --output-dir $(DOC_DIR) $(DOC_OPTS) $(SRC_DIR)

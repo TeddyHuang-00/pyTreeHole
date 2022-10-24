@@ -1,3 +1,20 @@
+"""
+树洞相关数据模型
+
+- 树洞类
+    - `Hole`
+        基本树洞类型
+    - `ListHole`
+        首页树洞类型（包含一些额外信息）
+    - `AttentionHole`
+        关注树洞类型（包含一些额外信息）
+    - `GenericHole`
+        泛树洞类型（用于类型注释）
+- 树洞评论类
+    - `Comment`
+        树洞回复类型
+"""
+
 from dataclasses import dataclass
 from typing import Any, Optional, TypeVar, Union
 
@@ -28,7 +45,7 @@ class Hole:
     tag: str | None
         树洞标签
     extra: int | None
-        树洞额外信息（暂不确定其具体含义）
+        树洞额外信息（暂不确定其具体含义，可能为带图的洞额外计数）
     """
 
     pid: Optional[int] = None

@@ -1,3 +1,18 @@
+"""
+A simple interface to PKU Hole
+
+快速上手：
+
+```py
+from treehole import TreeHoleClient
+
+client = TreeHoleClient("your token")
+hole, timestamp = client.get_hole("hole ID")
+print(hole)
+```
+
+"""
+
 from importlib.metadata import PackageNotFoundError, version
 
 try:
