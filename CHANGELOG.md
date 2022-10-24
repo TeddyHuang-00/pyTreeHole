@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.0.1
+
+- Minor patch for demo case in README.md
+
 ## Version 1.0.0
 
 - Rename `Client` class to `TreeHoleClient` to avoid similar name with submodule `client` (breaks backward compatibility)

@@ -33,9 +33,9 @@ pip3 install TreeHole
 ## 使用
 
 ```python
-from treehole import Client
+from treehole import TreeHoleClient
 
-client = Client(<Your Token>)
+client = TreeHoleClient(<Your Token>)
 # 获取单个树洞
 hole, timestamp = client.get_hole(<Hole ID>)
 # 获取树洞评论
