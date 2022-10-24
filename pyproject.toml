@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TreeHole"
-version = "0.0.3"
+version = "1.0.0"
 authors = [{ name = "TeddyHuang-00", email = "huang_nan_2019@pku.edu.cn" }]
 description = "A Python interface to PKU Hole!"
 readme = "README.md"
@@ -21,4 +21,4 @@ dependencies = ["requests"]
 "Bug Tracker" = "https://github.com/TeddyHuang-00/pyTreeHole/issues"
 
 [project.optional-dependencies]
-test = ["setuptools", "rich", "pytest", "setuptools"]
+test = ["setuptools", "rich", "pytest"]

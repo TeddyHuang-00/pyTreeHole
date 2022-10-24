@@ -1,13 +1,10 @@
 # Changelog
 
-## Version 0.0.1
+## Version 1.0.0
 
-- Add basic functionality
-- Remove redundant documentation files
-
-## Version 0.0.2
-
-- Fix broken dependencies problem
+- Rename `Client` class to `TreeHoleClient` to avoid similar name with submodule `client` (breaks backward compatibility)
+- Documentation is out! Check it out at [GitHub Pages](https://teddyhuang-00.github.io/pyTreeHole)
+- Refactor code, add more unit tests using [`pytest`](https://docs.pytest.org/en/stable/)
 
 ## Version 0.0.3
 
@@ -18,3 +15,12 @@
 - Add a new data model for user nicknames
 - Add a bunch of `post_*` methods to client! You can now post comments, holes, attentions!
 - Rename `test-client.py` to `test-get.py`
+
+## Version 0.0.2
+
+- Fix broken dependencies problem
+
+## Version 0.0.1
+
+- Add basic functionality
+- Remove redundant documentation files
