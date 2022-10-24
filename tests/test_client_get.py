@@ -1,10 +1,10 @@
 import json
 
-from treehole import Client
+from treehole import TreeHoleClient
 
 secrets = json.load(open("secrets.json"))
 
-client = Client(secrets["token"])
+client = TreeHoleClient(secrets["token"])
 
 # Test on a hole with both text and image
 print("Get Hole")

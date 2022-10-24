@@ -9,43 +9,49 @@ class Hole:
     """
     树洞基本数据模型
 
-    :param pid: 树洞 ID
-    :param timestamp: 时间戳
-
-    :param reply: 树洞回复数
-    :param likenum: 树洞关注数
-
-    :param type: 树洞类型 (目前仅有 'text' 或 'image')
-    :param text: 树洞文本内容
-    :param url: 树洞图像 URL (如果类型为 'image')
-
-    :param extra: 树洞额外信息 (不确定)
-    :param tag: 树洞标签 (不确定)
+    Attributes
+    ----------
+    pid: int | None
+        树洞 ID
+    timestamp: int | None
+        树洞创建时间戳
+    reply: int | None
+        树洞回复数
+    likenum: int | None
+        树洞关注数
+    type: str | None
+        树洞类型（目前已知仅有：`text` 和 `image` 两种类型）
+    text: str | None
+        树洞文本内容
+    url: str | None
+        树洞图片链接（仅当 `type` 为 `image` 时非空）
+    tag: str | None
+        树洞标签
+    extra: int | None
+        树洞额外信息（暂不确定其具体含义）
     """
 
-    pid: Optional[str] = None
+    pid: Optional[int] = None
     timestamp: Optional[int] = None
-    # type is either "text" or "image" at the moment
     type: Optional[str] = None
     text: Optional[str] = None
     url: Optional[str] = None
 
     reply: Optional[int] = None
     likenum: Optional[int] = None
-    # Following fields I don't know what they are for
-    extra: Optional[str] = None
     tag: Optional[str] = None
+    extra: Optional[int] = None
 
     @classmethod
     def from_data(cls, data: dict[str, Any]):
         return cls(
-            pid=data["pid"],
+            pid=int(data["pid"]),
             text=data["text"],
             timestamp=int(data["timestamp"]),
             reply=int(data["reply"]),
             likenum=int(data["likenum"]),
             type=data["type"],
-            extra=data["extra"],
+            extra=int(data["extra"]),
             url=data["url"],
             tag=data["tag"],
         )
@@ -63,20 +69,28 @@ class Comment:
     """
     树洞回复数据模型
 
-    :param cid: 回复 ID
-    :param pid: 树洞 ID
-    :param timestamp: 时间戳
-
-    :param name: 回复者
-    :param text: 回复内容
-    :param islz: 是否为洞主
-
-    :param anonymous: 是否匿名 (不确定，是则 1 为匿名)
-    :param tag: 回复标签 (不确定)
+    Attributes
+    ----------
+    cid: int | None
+        回复 ID
+    pid: int | None
+        树洞 ID
+    timestamp: int | None
+        回复创建时间戳
+    name: str | None
+        回复者昵称
+    text: str | None
+        回复文本内容
+    islz: int | None
+        是否为洞主回复（0 为否，1 为是）
+    anonymous: int | None
+        是否为匿名回复（0 为否，1 为是）
+    tag: str | None
+        回复标签
     """
 
-    cid: Optional[str] = None
-    pid: Optional[str] = None
+    cid: Optional[int] = None
+    pid: Optional[int] = None
     timestamp: Optional[int] = None
 
     name: Optional[str] = None
@@ -85,19 +99,19 @@ class Comment:
 
     tag: Optional[str] = None
     # I don't know what this field is for
-    anonymous: Optional[str] = None
+    anonymous: Optional[int] = None
 
     @classmethod
     def from_data(cls, data: dict[str, Any]):
         return cls(
-            cid=data["cid"],
-            pid=data["pid"],
+            cid=int(data["cid"]),
+            pid=int(data["pid"]),
             text=data["text"],
             timestamp=int(data["timestamp"]),
             tag=data["tag"],
             islz=int(data["islz"]),
             name=data["name"],
-            anonymous=data["anonymous"],
+            anonymous=int(data["anonymous"]),
         )
 
     def __repr__(self):
@@ -113,21 +127,30 @@ class ListHole(Hole):
     """
     树洞数据模型（来自列表）
 
-    :param hidden: 是否隐藏（不确定，是则 1 为隐藏）
-    :param hot: 热门时间戳（不确定，看起来与 timestamp 一致）
-
-    :param pid: 树洞 ID
-    :param timestamp: 时间戳
-
-    :param reply: 树洞回复数
-    :param likenum: 树洞关注数
-
-    :param type: 树洞类型 (目前仅有 'text' 或 'image')
-    :param text: 树洞文本内容
-    :param url: 树洞图像 URL (如果类型为 'image')
-
-    :param extra: 树洞额外信息 (不确定)
-    :param tag: 树洞标签 (不确定)
+    Attributes
+    ----------
+    pid: int | None
+        树洞 ID
+    timestamp: int | None
+        树洞创建时间戳
+    reply: int | None
+        树洞回复数
+    likenum: int | None
+        树洞关注数
+    type: str | None
+        树洞类型（目前已知仅有：`text` 和 `image` 两种类型）
+    text: str | None
+        树洞文本内容
+    url: str | None
+        树洞图片链接（仅当 `type` 为 `image` 时非空）
+    tag: str | None
+        树洞标签
+    extra: int | None
+        树洞额外信息（暂不确定其具体含义）
+    hidden: int | None
+        树洞是否被隐藏（0 为否，1 为是）
+    hot: int | None
+        热门时间戳（不确定，似乎总与 timestamp 一致）
     """
 
     hidden: Optional[int] = None
@@ -136,13 +159,13 @@ class ListHole(Hole):
     @classmethod
     def from_data(cls, data: dict[str, Any]):
         return cls(
-            pid=data["pid"],
+            pid=int(data["pid"]),
             text=data["text"],
             timestamp=int(data["timestamp"]),
             reply=int(data["reply"]),
             likenum=int(data["likenum"]),
             type=data["type"],
-            extra=data["extra"],
+            extra=int(data["extra"]),
             url=data["url"],
             tag=data["tag"],
             hidden=int(data["hidden"]),
@@ -155,20 +178,28 @@ class AttentionHole(Hole):
     """
     树洞数据模型（来自关注）
 
-    :param attention_tag: 关注标签（不确定）
-
-    :param pid: 树洞 ID
-    :param timestamp: 时间戳
-
-    :param reply: 树洞回复数
-    :param likenum: 树洞关注数
-
-    :param type: 树洞类型 (目前仅有 'text' 或 'image')
-    :param text: 树洞文本内容
-    :param url: 树洞图像 URL (如果类型为 'image')
-
-    :param extra: 树洞额外信息 (不确定)
-    :param tag: 树洞标签 (不确定)
+    Attributes
+    ----------
+    pid: int | None
+        树洞 ID
+    timestamp: int | None
+        树洞创建时间戳
+    reply: int | None
+        树洞回复数
+    likenum: int | None
+        树洞关注数
+    type: str | None
+        树洞类型（目前已知仅有：`text` 和 `image` 两种类型）
+    text: str | None
+        树洞文本内容
+    url: str | None
+        树洞图片链接（仅当 `type` 为 `image` 时非空）
+    tag: str | None
+        树洞标签
+    extra: int | None
+        树洞额外信息（暂不确定其具体含义）
+    attention_tag: str | None
+        关注标签（暂不确定其具体含义）
     """
 
     attention_tag: Optional[str] = None
@@ -176,20 +207,17 @@ class AttentionHole(Hole):
     @classmethod
     def from_data(cls, data: dict[str, Any]):
         return cls(
-            pid=data["pid"],
+            pid=int(data["pid"]),
             text=data["text"],
             timestamp=int(data["timestamp"]),
             reply=int(data["reply"]),
             likenum=int(data["likenum"]),
             type=data["type"],
-            extra=data["extra"],
+            extra=int(data["extra"]),
             url=data["url"],
             tag=data["tag"],
             attention_tag=data["attention_tag"],
         )
-
-
-GenericHole = TypeVar("GenericHole", Hole, ListHole, AttentionHole)
 
 
 class UserNameMeta(type):
@@ -301,13 +329,27 @@ class UserNameMeta(type):
 
 class UserName(metaclass=UserNameMeta):
     """
-    用户名数据模型
+    用户昵称名数据模型
 
-    用法：
+    判断是否为合法昵称（大小写不敏感）：
 
     ```python
     "Angry alice" in UserName # True
+    "Angrya lice" in UserName # False
+    ```
+
+    编号与昵称互转（大小写不敏感，下标从 0 开始）：
+
+    ```python
     UserName[48]     # "Angry Winnie"
     UserName["You Win 1234"]  # 1234
     ```
     """
+
+
+GenericHole = TypeVar("GenericHole", Hole, ListHole, AttentionHole)
+"""
+泛树洞类型
+
+用于标记函数的参数类型，表示该函数可以接受任意类型的树洞。
+"""

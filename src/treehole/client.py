@@ -1,16 +1,13 @@
 from base64 import b64encode
-import logging
 from typing import Any, Optional, Union
 
 import requests
 from requests.compat import urlencode, urljoin
 
 from .models import AttentionHole, Comment, GenericHole, Hole, ListHole, UserName
+from .utils import CaptchaError, EmptyError, logger
 
-logger = logging.getLogger("pyTreeHole")
-
-
-__all__ = ["Client"]
+__all__ = ["TreeHoleClient"]
 
 
 BASE_URL = "https://pkuhelper.pku.edu.cn/services/pkuhole/api.php"
@@ -35,21 +32,18 @@ BASE_QUERY = {
 }
 
 
-class CaptchaError(Exception):
-    """用户可能需要验证"""
-
-
-class EmptyError(Exception):
-    """没有数据"""
-
-
-class Client:
+class TreeHoleClient:
     """
     树洞交互客户端，低程度封装
 
-    :param token: 用户 token
-    :param header: 额外的请求头
-    :param base_query: 额外的请求参数
+    Parameters
+    ----------
+    token: str
+        用户 token，32 位字符串，可在树洞页面获取
+    header: dict[str, str]
+        额外的请求头，可选
+    base_query: dict[str, str]
+        额外的请求参数，可选
     """
 
     def __init__(
@@ -80,10 +74,12 @@ class Client:
 
     @property
     def header(self) -> dict[str, str]:
+        """完整请求头，只读"""
         return self.__header
 
     @property
     def base_query(self) -> dict[str, str]:
+        """完整请求参数，只读"""
         return self.__base_query
 
     @staticmethod
@@ -129,8 +125,17 @@ class Client:
         """
         获取树洞图片
 
-        :param hole: 树洞
-        :return: 图片二进制数据和图片类型
+        Parameters
+        ----------
+        hole: Hole | ListHole | AttentionHole
+            任一树洞类
+
+        Returns
+        -------
+        1: bytes | None
+            图片二进制数据，不包含图片或请求错误则返回 `None`
+        2: str | None
+            图片类型，不包含图片或请求错误则返回 `None`
         """
         if hole.type == "image":
             assert hole.url is not None
@@ -146,8 +151,17 @@ class Client:
         """
         获取树洞评论
 
-        :param pid: 树洞洞号
-        :return: 树洞评论列表，是否已关注
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+
+        Returns
+        -------
+        1: list[Comment] | None
+            评论列表，请求错误则返回 `None`
+        2: int | None
+            是否已关注，请求错误则返回 `None`
         """
 
         if not self.__is_num(pid):
@@ -177,8 +191,17 @@ class Client:
         """
         获取单个树洞
 
-        :param pid: 树洞洞号
-        :return: 树洞主体，查询的时间戳
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+
+        Returns
+        -------
+        1: Hole | None
+            树洞，请求错误则返回 `None`
+        2: int | None
+            查询的时间戳，请求错误则返回 `None`
         """
         if not self.__is_num(pid):
             raise ValueError("pid must be an integer or string of interger")
@@ -205,8 +228,17 @@ class Client:
         """
         获取首页树洞
 
-        :param page: 指定页数
-        :return: 首页树洞列表，查询的时间戳
+        Parameters
+        ----------
+        page: int | str
+            列表页码，默认为 1
+
+        Returns
+        -------
+        1: list[ListHole] | None
+            首页树洞列表，请求错误则返回 `None`
+        2: int | None
+            查询的时间戳，请求错误则返回 `None`
         """
         if not self.__is_num(page):
             raise ValueError("page must be an integer or string of interger")
@@ -233,8 +265,17 @@ class Client:
         """
         获取关注树洞
 
-        :param page: 指定页数
-        :return: 关注树洞列表，查询的时间戳
+        Parameters
+        ----------
+        page: int | str
+            列表页码，默认为 1
+
+        Returns
+        -------
+        1: list[AttentionHole] | None
+            关注树洞列表，请求错误则返回 `None`
+        2: int | None
+            查询的时间戳，请求错误则返回 `None`
         """
         if not self.__is_num(page):
             raise ValueError("page must be an integer or string of interger")
@@ -261,14 +302,22 @@ class Client:
         self,
         keywords: Union[str, list[str]],
         page: Union[int, str] = 1,
-        page_size: int = 50,
+        page_size: Union[int, str] = 50,
     ) -> Optional[list[Hole]]:
         """
         搜索树洞
 
-        :param keywords: 搜索关键词
-        :param page: 指定页数
-        :return: 检索到的树洞列表
+        Parameters
+        ----------
+        keywords: str | list[str]
+            搜索关键词
+        page: int | str
+            列表页码，默认为 1
+
+        Returns
+        -------
+        list[Hole] | None
+            搜索结果，请求错误则返回 `None`
         """
         if not self.__is_num(page):
             raise ValueError("page must be an integer or string of interger")
@@ -304,9 +353,17 @@ class Client:
         """
         发布树洞
 
-        :param content: 树洞内容
-        :param image: 树洞图片 (文件名或二进制数据)
-        :return: 洞号 (失败则返回 None)
+        Parameters
+        ----------
+        text: str
+            树洞内容
+        image: bytes | str
+            树洞图片 (二进制数据或文件名)
+
+        Returns
+        -------
+        int | None
+            发布成功的树洞 ID，请求错误则返回 `None`
         """
         if not text and not image:
             raise EmptyError("Empty post is not allowed")
@@ -358,10 +415,19 @@ class Client:
         """
         发布评论
 
-        :param pid: 树洞号
-        :param text: 评论内容
-        :param reply_to: 回复的用户 (默认为回复洞主)
-        :return: 树洞号 (失败则返回 None)
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+        text: str
+            评论内容
+        reply_to: int | str
+            回复的用户昵称或标号（非层号），`None` 为回复洞主（默认）
+
+        Returns
+        -------
+        int | None
+            回复成功的树洞 ID，请求错误则返回 `None`
         """
         if not text:
             raise EmptyError("Empty post is not allowed")
@@ -401,8 +467,15 @@ class Client:
         """
         关注树洞
 
-        :param pid: 树洞号
-        :return: 是否关注成功 (已经订阅的树洞返回 False)
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+
+        Returns
+        -------
+        bool
+            是否关注成功，已关注的树洞返回 `False`
         """
         if not self.__is_num(pid):
             raise ValueError("pid must be an integer or string of interger")
@@ -432,8 +505,15 @@ class Client:
         """
         取消关注树洞
 
-        :param pid: 树洞号
-        :return: 是否取关成功 (未关注的树洞也返回 True)
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+
+        Returns
+        -------
+        bool
+            是否取消关注成功，未关注的树洞返回 `True`
         """
         if not self.__is_num(pid):
             raise ValueError("pid must be an integer or string of interger")
@@ -465,9 +545,19 @@ class Client:
         """
         切换关注状态
 
-        :param pid: 树洞号
-        :param two_factor: 是否二次验证 (默认 False)
-        :return: 是否切换成功，当前关注状态
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+        two_factor: bool
+            是否启用双重验证（默认为 `False`）
+
+        Returns
+        -------
+        1: bool | None
+            是否成功切换关注状态，请求错误则返回 `None`
+        2: int | None
+            当前关注状态，`1` 为关注，`0` 为未关注，请求错误则返回 `None`
         """
         _, attention = self.get_comment(pid)
         if attention is None:
@@ -487,12 +577,19 @@ class Client:
 
     def post_report(self, pid: Union[int, str], reason: str = "") -> bool:
         """
-        举报树洞
+        举报树洞（注意！举报自己的树洞会导致立刻被删并且禁言）
 
-        :param pid: 树洞号
-        :param reason: 举报理由
+        Parameters
+        ----------
+        pid: int | str
+            树洞 ID
+        reason: str
+            举报理由（默认为空）
 
-        :return: 发送成功与否
+        Returns
+        -------
+        bool
+            是否举报成功
         """
         if not self.__is_num(pid):
             raise ValueError("pid must be an integer or string of interger")

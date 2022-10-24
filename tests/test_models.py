@@ -1,4 +1,4 @@
-from treehole.models import *
+from treehole import Hole, ListHole, AttentionHole, Comment, UserName
 
 data = {
     "pid": "4216687",

@@ -1,10 +1,10 @@
-from treehole import Client
+from treehole import TreeHoleClient
 
 import json
 
 secrets = json.load(open("secrets.json"))
 
-client = Client(secrets["backup_token"])
+client = TreeHoleClient(secrets["backup_token"])
 
 # # This test is not recommended,
 # # as it will actually post a spam hole
