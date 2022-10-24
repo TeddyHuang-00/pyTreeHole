@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.1.0
+
+- Revise redundant code in calls to `requests`
+- Asynchronous methods are now available! They come with `_async` suffixes compared to their synchronous counterparts.
+
 ## Version 1.0.1
 
 - Minor patch for demo case in README.md
