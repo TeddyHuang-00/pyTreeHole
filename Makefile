@@ -5,7 +5,10 @@ TEST?=pytest
 
 DOC_BRANCH?=gh-pages
 DOC_PORT?=8000
-DOC_OPTS+=-c latex_math=True
+DOC_OPTS+=-c latex_math=True -c show_inherited_members=True
+
+TEST_OPTS+=--durations=0 --json-report --json-report-summary --json-report-file=$(TST_DIR)/tmp.json
+TEST_POST_SCRIPT?=$(TST_DIR)/process_test_result.py
 
 NAME=treehole
 
@@ -13,6 +16,7 @@ BASE_DIR=$(CURDIR)
 OUTPUT_DIR=$(BASE_DIR)/build
 DOC_DIR=$(BASE_DIR)/docs
 SRC_DIR=$(BASE_DIR)/src/$(NAME)
+TST_DIR=$(BASE_DIR)/tests
 
 TEST_PUBLISH_SITE=testpypi
 PUBLISH_SITE=pypi
@@ -29,7 +33,8 @@ publish: rebuild
 	$(PY) -m twine upload --repository $(PUBLISH_SITE) $(OUTPUT_DIR)/*
 
 run-tests:
-	$(TEST) $(BASE_DIR)
+	$(TEST) $(TEST_OPTS) $(BASE_DIR)
+	$(PY) $(TEST_POST_SCRIPT)
 
 docs: docs-clean
 	$(DOC) --html --output-dir $(DOC_DIR) $(DOC_OPTS) $(SRC_DIR)

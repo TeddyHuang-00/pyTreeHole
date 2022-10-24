@@ -13,14 +13,16 @@ client = TreeHoleClient(secrets["token"])
 
 # This unit test is safe to run
 # Cause this is a long-dead hole
-def test_post_comment():
-    assert client.post_comment(3075815, "Test comment", reply_to="alice")
+@pytest.mark.asyncio
+async def test_post_comment_async():
+    assert await client.post_comment_async(3075815, "Test comment", reply_to="alice")
 
 
 # Absolutely safe to run
-def test_post_attention():
+@pytest.mark.asyncio
+async def test_post_attention_async():
     pid = 3153214
-    success, attention = client.post_toggle_attention(pid)
+    success, attention = await client.post_toggle_attention_async(pid)
     assert success
     assert attention is not None
     if attention:
@@ -36,12 +38,14 @@ def test_post_attention():
 # Do not run this unit test !!!!
 # unless you know excatly what you are doing
 @pytest.mark.skip(reason="This unit test will spam the server")
-def test_post_hole():
-    assert client.post_hole("test")
+@pytest.mark.asyncio
+async def test_post_hole_async():
+    assert await client.post_hole_async("test")
 
 
 # Do not run this unit test !!!!
 # unless you know excatly what you are doing
 @pytest.mark.skip(reason="This unit test will cause people to be banned")
-def test_post_report():
-    assert client.post_report(0)
+@pytest.mark.asyncio
+async def test_post_report_async():
+    assert await client.post_report_async(0)

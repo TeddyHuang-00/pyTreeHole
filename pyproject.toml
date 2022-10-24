@@ -14,11 +14,11 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-dependencies = ["requests"]
+dependencies = ["requests", "aiohttp", "aiofiles"]
 
 [project.urls]
 "Homepage" = "https://github.com/TeddyHuang-00/pyTreeHole"
 "Bug Tracker" = "https://github.com/TeddyHuang-00/pyTreeHole/issues"
 
 [project.optional-dependencies]
-test = ["setuptools", "rich", "pytest"]
+test = ["setuptools", "rich", "pytest", "pytest-asyncio", "pytest-json-report"]
