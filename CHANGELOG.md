@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.1.1
+
+- Minor patch of backwards compatibility for up to Python 3.6! Thank you, [vermin](https://github.com/netromdk/vermin)!
+
 ## Version 1.1.0
 
 - Revise redundant code in calls to `requests`

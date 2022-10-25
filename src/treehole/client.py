@@ -3,10 +3,10 @@
 """
 
 from base64 import b64encode
-from typing import Any, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-import aiohttp
 import aiofiles
+import aiohttp
 import requests
 from requests.compat import urljoin
 
@@ -46,9 +46,9 @@ class TreeHoleClient:
     ----------
     token: str
         用户 token，32 位字符串，可在树洞页面获取
-    header: dict[str, str]
+    header: Dict[str, str]
         额外的请求头，可选
-    base_param: dict[str, str]
+    base_param: Dict[str, str]
         额外的请求参数，可选
     base_url: str
         其他树洞 API 地址，可选
@@ -57,8 +57,8 @@ class TreeHoleClient:
     def __init__(
         self,
         token: str,
-        header: Optional[dict[str, str]] = None,
-        base_param: Optional[dict[str, str]] = None,
+        header: Optional[Dict[str, str]] = None,
+        base_param: Optional[Dict[str, str]] = None,
         base_url: Optional[str] = None,
     ) -> None:
         self.__token = token
@@ -83,12 +83,12 @@ class TreeHoleClient:
         return self.__token
 
     @property
-    def header(self) -> dict[str, str]:
+    def header(self) -> Dict[str, str]:
         """请求头，只读"""
         return self.__header
 
     @property
-    def base_param(self) -> dict[str, str]:
+    def base_param(self) -> Dict[str, str]:
         """请求参数，只读"""
         return self.__base_param
 
@@ -137,18 +137,18 @@ class TreeHoleClient:
             return True
 
     @staticmethod
-    def __is_valid_json_code(response: dict[str, Any]) -> bool:
+    def __is_valid_json_code(response: Dict[str, Any]) -> bool:
         # TODO: To be tested for exact error
         return response["code"] == 0
 
     @staticmethod
-    def __is_valid_json_captcha(response: dict[str, Any]) -> bool:
+    def __is_valid_json_captcha(response: Dict[str, Any]) -> bool:
         # TODO: To be tested for exact error
         return not response["captcha"]
 
     def get_hole_image(
         self, hole: GenericHole
-    ) -> Union[tuple[bytes, str], tuple[None, None]]:
+    ) -> Union[Tuple[bytes, str], Tuple[None, None]]:
         """
         获取树洞图片
 
@@ -174,7 +174,7 @@ class TreeHoleClient:
 
     async def get_hole_image_async(
         self, hole: GenericHole
-    ) -> Union[tuple[bytes, str], tuple[None, None]]:
+    ) -> Union[Tuple[bytes, str], Tuple[None, None]]:
         """
         异步获取树洞图片
 
@@ -205,7 +205,7 @@ class TreeHoleClient:
 
     def get_comment(
         self, pid: Union[int, str]
-    ) -> Union[tuple[list[Comment], int], tuple[None, None]]:
+    ) -> Union[Tuple[List[Comment], int], Tuple[None, None]]:
         """
         获取树洞评论
 
@@ -216,7 +216,7 @@ class TreeHoleClient:
 
         Returns
         -------
-        1: list[Comment] | None
+        1: List[Comment] | None
             评论列表，请求错误则返回 `None`
         2: int | None
             是否已关注，请求错误则返回 `None`
@@ -244,7 +244,7 @@ class TreeHoleClient:
 
     async def get_comment_async(
         self, pid: Union[int, str]
-    ) -> Union[tuple[list[Comment], int], tuple[None, None]]:
+    ) -> Union[Tuple[List[Comment], int], Tuple[None, None]]:
         """
         异步获取树洞评论
 
@@ -255,7 +255,7 @@ class TreeHoleClient:
 
         Returns
         -------
-        1: list[Comment] | None
+        1: List[Comment] | None
             评论列表，请求错误则返回 `None`
         2: int | None
             是否已关注，请求错误则返回 `None`
@@ -285,7 +285,7 @@ class TreeHoleClient:
 
     def get_hole(
         self, pid: Union[int, str]
-    ) -> Union[tuple[Hole, int], tuple[None, None]]:
+    ) -> Union[Tuple[Hole, int], Tuple[None, None]]:
         """
         获取单个树洞
 
@@ -321,7 +321,7 @@ class TreeHoleClient:
 
     async def get_hole_async(
         self, pid: Union[int, str]
-    ) -> Union[tuple[Hole, int], tuple[None, None]]:
+    ) -> Union[Tuple[Hole, int], Tuple[None, None]]:
         """
         异步获取单个树洞
 
@@ -359,7 +359,7 @@ class TreeHoleClient:
 
     def get_holes(
         self, page: Union[int, str] = 1
-    ) -> Union[tuple[list[ListHole], int], tuple[None, None]]:
+    ) -> Union[Tuple[List[ListHole], int], Tuple[None, None]]:
         """
         获取首页树洞
 
@@ -370,7 +370,7 @@ class TreeHoleClient:
 
         Returns
         -------
-        1: list[ListHole] | None
+        1: List[ListHole] | None
             首页树洞列表，请求错误则返回 `None`
         2: int | None
             查询的时间戳，请求错误则返回 `None`
@@ -395,7 +395,7 @@ class TreeHoleClient:
 
     async def get_holes_async(
         self, page: Union[int, str] = 1
-    ) -> Union[tuple[list[ListHole], int], tuple[None, None]]:
+    ) -> Union[Tuple[List[ListHole], int], Tuple[None, None]]:
         """
         异步获取首页树洞
 
@@ -406,7 +406,7 @@ class TreeHoleClient:
 
         Returns
         -------
-        1: list[ListHole] | None
+        1: List[ListHole] | None
             首页树洞列表，请求错误则返回 `None`
         2: int | None
             查询的时间戳，请求错误则返回 `None`
@@ -433,7 +433,7 @@ class TreeHoleClient:
 
     def get_attention(
         self, page: Union[int, str] = 1
-    ) -> Union[tuple[list[AttentionHole], int], tuple[None, None]]:
+    ) -> Union[Tuple[List[AttentionHole], int], Tuple[None, None]]:
         """
         获取关注树洞
 
@@ -444,7 +444,7 @@ class TreeHoleClient:
 
         Returns
         -------
-        1: list[AttentionHole] | None
+        1: List[AttentionHole] | None
             关注树洞列表，请求错误则返回 `None`
         2: int | None
             查询的时间戳，请求错误则返回 `None`
@@ -471,7 +471,7 @@ class TreeHoleClient:
 
     async def get_attention_async(
         self, page: Union[int, str] = 1
-    ) -> Union[tuple[list[AttentionHole], int], tuple[None, None]]:
+    ) -> Union[Tuple[List[AttentionHole], int], Tuple[None, None]]:
         """
         异步获取关注树洞
 
@@ -482,7 +482,7 @@ class TreeHoleClient:
 
         Returns
         -------
-        1: list[AttentionHole] | None
+        1: List[AttentionHole] | None
             关注树洞列表，请求错误则返回 `None`
         2: int | None
             查询的时间戳，请求错误则返回 `None`
@@ -511,23 +511,23 @@ class TreeHoleClient:
 
     def get_search(
         self,
-        keywords: Union[str, list[str]],
+        keywords: Union[str, List[str]],
         page: Union[int, str] = 1,
         page_size: Union[int, str] = 50,
-    ) -> Optional[list[Hole]]:
+    ) -> Optional[List[Hole]]:
         """
         搜索树洞
 
         Parameters
         ----------
-        keywords: str | list[str]
+        keywords: str | List[str]
             搜索关键词
         page: int | str
             列表页码，默认为 1
 
         Returns
         -------
-        list[Hole] | None
+        List[Hole] | None
             搜索结果，请求错误则返回 `None`
         """
         if not self.__is_num(page):
@@ -559,23 +559,23 @@ class TreeHoleClient:
 
     async def get_search_async(
         self,
-        keywords: Union[str, list[str]],
+        keywords: Union[str, List[str]],
         page: Union[int, str] = 1,
         page_size: Union[int, str] = 50,
-    ) -> Optional[list[Hole]]:
+    ) -> Optional[List[Hole]]:
         """
         异步搜索树洞
 
         Parameters
         ----------
-        keywords: str | list[str]
+        keywords: str | List[str]
             搜索关键词
         page: int | str
             列表页码，默认为 1
 
         Returns
         -------
-        list[Hole] | None
+        List[Hole] | None
             搜索结果，请求错误则返回 `None`
         """
         if not self.__is_num(page):
@@ -1002,7 +1002,7 @@ class TreeHoleClient:
 
     def post_toggle_attention(
         self, pid: Union[int, str], two_factor: bool = False
-    ) -> Union[tuple[bool, Optional[int]], tuple[None, None]]:
+    ) -> Union[Tuple[bool, Optional[int]], Tuple[None, None]]:
         """
         切换关注状态
 
@@ -1038,7 +1038,7 @@ class TreeHoleClient:
 
     async def post_toggle_attention_async(
         self, pid: Union[int, str], two_factor: bool = False
-    ) -> Union[tuple[bool, Optional[int]], tuple[None, None]]:
+    ) -> Union[Tuple[bool, Optional[int]], Tuple[None, None]]:
         """
         异步切换关注状态
 

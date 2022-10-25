@@ -13,7 +13,10 @@ print(hole)
 
 """
 
-from importlib.metadata import PackageNotFoundError, version
+try:
+    from importlib.metadata import PackageNotFoundError, version  # novm
+except ImportError:  # Fallback for Python < 3.8
+    from importlib_metadata import PackageNotFoundError, version  # novm
 
 try:
     # Change here if project is renamed and does not equal the package name
