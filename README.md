@@ -55,7 +55,7 @@ pid = client.post_comment(<Hole ID>, <Text>, <Reply To>)
 success = client.post_report(<Hole ID>)
 ```
 
-用例请参考 [example](./tests/sample.py)
+用例请参考 [非异步](./tests/sample.py) 和 [异步](./tests/sample_async.py)
 
 ## 开发
 

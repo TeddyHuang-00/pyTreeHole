@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.1.2
+
+- Minor patch for unawaited async function
+- A new example for async methods usage (see [sample_async.py](./tests/sample_async.py))
+
 ## Version 1.1.1
 
 - Minor patch of backwards compatibility for up to Python 3.6! Thank you, [vermin](https://github.com/netromdk/vermin)!
