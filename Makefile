@@ -2,6 +2,7 @@ PY?=python3
 BUILD?=python3 -m build
 DOC?=pdoc
 TEST?=pytest
+VER_TEST?=vermin
 
 DOC_BRANCH?=gh-pages
 DOC_PORT?=8000
@@ -9,6 +10,7 @@ DOC_OPTS+=-c latex_math=True -c show_inherited_members=True
 
 TEST_OPTS+=--durations=0 --json-report --json-report-summary --json-report-file=$(TST_DIR)/tmp.json
 TEST_POST_SCRIPT?=$(TST_DIR)/process_test_result.py
+VER_TEST_OPTS+=--eval-annotations --backport dataclasses --backport typing -vv
 
 NAME=treehole
 
@@ -32,9 +34,12 @@ test-publish: rebuild
 publish: rebuild
 	$(PY) -m twine upload --repository $(PUBLISH_SITE) $(OUTPUT_DIR)/*
 
-run-tests:
+unit-tests:
 	$(TEST) $(TEST_OPTS) $(BASE_DIR)
 	$(PY) $(TEST_POST_SCRIPT)
+
+version-test:
+	$(VER_TEST) $(VER_TEST_OPTS) $(SRC_DIR)
 
 docs: docs-clean
 	$(DOC) --html --output-dir $(DOC_DIR) $(DOC_OPTS) $(SRC_DIR)
@@ -53,4 +58,4 @@ clean:
 docs-clean:
 	- rm -rf $(DOC_DIR)
 
-.PHONY: build rebuild test-publish publish run-tests docs docs-dev docs-publish clean docs-clean
+.PHONY: build rebuild test-publish publish unit-tests docs docs-dev docs-publish clean docs-clean

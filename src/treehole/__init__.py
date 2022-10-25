@@ -13,7 +13,13 @@ print(hole)
 
 """
 
-from importlib.metadata import PackageNotFoundError, version
+import sys
+
+# Determin if Python version >= 3.8
+if sys.version_info >= (3, 8):
+    from importlib.metadata import PackageNotFoundError, version # novm
+else:
+    from importlib_metadata import PackageNotFoundError, version # novm
 
 try:
     # Change here if project is renamed and does not equal the package name

@@ -3,7 +3,7 @@
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, Dict, Optional, TypeVar, Union
 
 __all__ = ("Hole", "ListHole", "AttentionHole", "Comment", "GenericHole", "UserName")
 
@@ -47,7 +47,7 @@ class Hole:
     extra: Optional[int] = None
 
     @classmethod
-    def from_data(cls, data: dict[str, Any]):
+    def from_data(cls, data: Dict[str, Any]):
         return cls(
             pid=int(data["pid"]),
             text=data["text"],
@@ -106,7 +106,7 @@ class Comment:
     anonymous: Optional[int] = None
 
     @classmethod
-    def from_data(cls, data: dict[str, Any]):
+    def from_data(cls, data: Dict[str, Any]):
         return cls(
             cid=int(data["cid"]),
             pid=int(data["pid"]),
@@ -143,7 +143,7 @@ class ListHole(Hole):
     hot: Optional[int] = None
 
     @classmethod
-    def from_data(cls, data: dict[str, Any]):
+    def from_data(cls, data: Dict[str, Any]):
         return cls(
             pid=int(data["pid"]),
             text=data["text"],
@@ -173,7 +173,7 @@ class AttentionHole(Hole):
     attention_tag: Optional[str] = None
 
     @classmethod
-    def from_data(cls, data: dict[str, Any]):
+    def from_data(cls, data: Dict[str, Any]):
         return cls(
             pid=int(data["pid"]),
             text=data["text"],
