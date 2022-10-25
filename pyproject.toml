@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TreeHole"
-version = "1.1.0.post1"
+version = "1.1.1"
 authors = [{ name = "TeddyHuang-00", email = "huang_nan_2019@pku.edu.cn" }]
 description = "A Python interface to PKU Hole!"
 readme = "README.md"
@@ -15,6 +15,7 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = ["requests", "aiohttp", "aiofiles"]
+keywords = ["pku", "hole", "treehole", "aiohttp", "requests"]
 
 [project.urls]
 "Homepage" = "https://github.com/TeddyHuang-00/pyTreeHole"
