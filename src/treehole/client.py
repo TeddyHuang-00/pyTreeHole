@@ -118,7 +118,7 @@ class TreeHoleClient:
             logger.error(
                 "Failed to get reponse, status code: %s, response: %s",
                 response.status_code,
-                response.text.encode("utf-8").decode("unicode_escape"),
+                response.reason,
             )
             return False
         else:
@@ -130,7 +130,7 @@ class TreeHoleClient:
             logger.error(
                 "Failed to get reponse, status code: %s, response: %s",
                 response.status,
-                response.text(),
+                response.reason,
             )
             return False
         else:

@@ -35,7 +35,7 @@ publish: rebuild
 	$(PY) -m twine upload --repository $(PUBLISH_SITE) $(OUTPUT_DIR)/*
 
 unit-tests:
-	$(TEST) $(TEST_OPTS) $(BASE_DIR)
+	- $(TEST) $(TEST_OPTS) $(BASE_DIR)
 	$(PY) $(TEST_POST_SCRIPT)
 
 version-test:
