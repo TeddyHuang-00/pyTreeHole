@@ -12,42 +12,33 @@ __all__ = ("Hole", "ListHole", "AttentionHole", "Comment", "GenericHole", "UserN
 class Hole:
     """
     树洞基本数据模型
-
-    Attributes
-    ----------
-    pid: int | None
-        树洞 ID
-    timestamp: int | None
-        树洞创建时间戳
-    reply: int | None
-        树洞回复数
-    likenum: int | None
-        树洞关注数
-    type: str | None
-        树洞类型（目前已知仅有：`text` 和 `image` 两种类型）
-    text: str | None
-        树洞文本内容
-    url: str | None
-        树洞图片链接（仅当 `type` 为 `image` 时非空）
-    tag: str | None
-        树洞标签
-    extra: int | None
-        树洞额外信息（暂不确定其具体含义，可能为带图的洞额外计数）
     """
 
     pid: Optional[int] = None
+    """树洞 ID"""
     timestamp: Optional[int] = None
+    """树洞创建时间戳"""
     type: Optional[str] = None
+    """树洞类型（目前已知仅有：`text` 和 `image` 两种类型）"""
     text: Optional[str] = None
+    """树洞文本内容"""
     url: Optional[str] = None
+    """树洞图片链接（仅当 `type` 为 `image` 时非空）"""
 
     reply: Optional[int] = None
+    """树洞回复数"""
     likenum: Optional[int] = None
+    """树洞关注数"""
     tag: Optional[str] = None
+    """树洞标签"""
     extra: Optional[int] = None
+    """树洞额外信息（暂不确定其具体含义，可能为带图的洞额外计数）"""
 
     @classmethod
     def from_data(cls, data: Dict[str, Any]):
+        """
+        从字典数据创建树洞对象
+        """
         return cls(
             pid=int(data["pid"]),
             text=data["text"],
@@ -65,6 +56,9 @@ class Hole:
 
     @property
     def data(self):
+        """
+        树洞数据转字典
+        """
         return self.__dict__
 
 
@@ -72,41 +66,33 @@ class Hole:
 class Comment:
     """
     树洞回复数据模型
-
-    Attributes
-    ----------
-    cid: int | None
-        回复 ID
-    pid: int | None
-        树洞 ID
-    timestamp: int | None
-        回复创建时间戳
-    name: str | None
-        回复者昵称
-    text: str | None
-        回复文本内容
-    islz: int | None
-        是否为洞主回复（0 为否，1 为是）
-    anonymous: int | None
-        是否为匿名回复（0 为否，1 为是）
-    tag: str | None
-        回复标签
     """
 
     cid: Optional[int] = None
+    """回复 ID"""
     pid: Optional[int] = None
+    """树洞 ID"""
     timestamp: Optional[int] = None
+    """回复时间戳"""
 
     name: Optional[str] = None
+    """回复者昵称"""
     islz: Optional[int] = None
+    """是否为洞主回复（0 为否，1 为是）"""
     text: Optional[str] = None
+    """回复文本内容"""
 
     tag: Optional[str] = None
-    # I don't know what this field is for
+    """回复标签"""
+    # TODO: Figure out the meaning of following field
     anonymous: Optional[int] = None
+    """是否为匿名回复（0 为否，1 为是）"""
 
     @classmethod
     def from_data(cls, data: Dict[str, Any]):
+        """
+        从字典数据创建回复对象
+        """
         return cls(
             cid=int(data["cid"]),
             pid=int(data["pid"]),
@@ -123,6 +109,9 @@ class Comment:
 
     @property
     def data(self):
+        """
+        回复数据转字典
+        """
         return self.__dict__
 
 
@@ -130,20 +119,18 @@ class Comment:
 class ListHole(Hole):
     """
     树洞数据模型（来自首页）
-
-    Attributes
-    ----------
-    hidden: int | None
-        树洞是否被隐藏（0 为否，1 为是）
-    hot: int | None
-        热门时间戳（不确定，似乎总与 timestamp 一致）
     """
 
     hidden: Optional[int] = None
+    """树洞是否被隐藏（0 为否，1 为是）"""
     hot: Optional[int] = None
+    """热门时间戳（不确定，似乎总与 timestamp 一致）"""
 
     @classmethod
     def from_data(cls, data: Dict[str, Any]):
+        """
+        从字典数据创建树洞对象
+        """
         return cls(
             pid=int(data["pid"]),
             text=data["text"],
@@ -163,17 +150,16 @@ class ListHole(Hole):
 class AttentionHole(Hole):
     """
     树洞数据模型（来自关注）
-
-    Attributes
-    ----------
-    attention_tag: str | None
-        关注标签（暂不确定其具体含义）
     """
 
     attention_tag: Optional[str] = None
+    """关注标签（暂不确定其具体含义）"""
 
     @classmethod
     def from_data(cls, data: Dict[str, Any]):
+        """
+        从字典数据创建树洞对象
+        """
         return cls(
             pid=int(data["pid"]),
             text=data["text"],

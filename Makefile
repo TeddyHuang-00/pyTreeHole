@@ -5,8 +5,7 @@ TEST?=pytest
 VER_TEST?=vermin
 
 DOC_BRANCH?=gh-pages
-DOC_PORT?=8000
-DOC_OPTS+=-c latex_math=True -c show_inherited_members=True
+DOC_OPTS+=-d markdown --math
 
 TEST_OPTS+=--durations=0 --json-report --json-report-summary --json-report-file=$(TST_DIR)/tmp.json
 TEST_POST_SCRIPT?=$(TST_DIR)/process_test_result.py
@@ -42,14 +41,11 @@ version-test:
 	$(VER_TEST) $(VER_TEST_OPTS) $(SRC_DIR)
 
 docs: docs-clean
-	$(DOC) --html --output-dir $(DOC_DIR) $(DOC_OPTS) $(SRC_DIR)
-
-docs-dev:
-	$(DOC) --http localhost:8000 $(DOC_OPTS) $(SRC_DIR)
+	$(DOC) $(SRC_DIR) $(DOC_OPTS) -o $(DOC_DIR)
 
 docs-publish: docs
 	- git branch -D $(DOC_BRANCH)
-	ghp-import -n -o -m "Generate docs $(shell date -u +"%Y-%m-%d %H:%M:%S")" -b $(DOC_BRANCH) $(DOC_DIR)/$(NAME)
+	ghp-import -n -o -m "Generate docs $(shell date -u +"%Y-%m-%d %H:%M:%S")" -b $(DOC_BRANCH) $(DOC_DIR)
 	git push -f origin $(DOC_BRANCH)
 
 clean:

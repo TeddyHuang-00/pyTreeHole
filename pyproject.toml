@@ -31,4 +31,5 @@ test = [
   "pytest-asyncio",
   "pytest-json-report",
   "vermin",
+  "pdoc",
 ]
