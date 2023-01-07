@@ -1,3 +1,7 @@
+**重要通知！！**：由于原树洞更改了鉴权方式和请求地址，导致本包暂时不可用，请耐心等待 2.0 版本
+
+---
+
 # TreeHole
 
 > A simple Python interface to PKU Tree Hole
