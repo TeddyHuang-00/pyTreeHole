@@ -14,23 +14,17 @@ client = TreeHoleClient(secrets["token"])
 # This unit test is safe to run
 # Cause this is a long-dead hole
 def test_post_comment():
-    assert client.post_comment(3075815, "Test comment", reply_to="alice")
+    assert client.post_comment(33171, "Test comment", reply_to="alice")
 
 
 # Absolutely safe to run
 def test_post_attention():
     pid = 3153214
-    success, attention = client.post_toggle_attention(pid)
+    success, attention = client.post_toggle_followed(pid)
     assert success
     assert attention is not None
-    if attention:
-        assert client.post_remove_attention(pid)
-        assert client.post_set_attention(pid)
-    else:
-        assert client.post_set_attention(pid)
-        assert client.post_remove_attention(pid)
     # Run it again to set it back to the original state
-    assert client.post_toggle_attention(pid)[0]
+    assert client.post_toggle_followed(pid)[0]
 
 
 # Do not run this unit test !!!!

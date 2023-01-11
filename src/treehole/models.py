@@ -3,9 +3,37 @@
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, TypeVar, Union
+from typing import Any, Dict, Tuple, Optional, Union
 
-__all__ = ("Hole", "ListHole", "AttentionHole", "Comment", "GenericHole", "UserName")
+__all__ = ("Hole", "Comment", "UserName")
+
+
+@dataclass(init=True, repr=True, order=False, unsafe_hash=True, frozen=False)
+class Label:
+    """
+    树洞标签数据模型
+    """
+
+    id: Optional[int] = None
+    """标签 ID"""
+    tag_name: Optional[str] = None
+    """标签名称"""
+    created_at: Optional[int] = None
+    """创建时间"""
+    updated_at: Optional[int] = None
+    """更新时间"""
+
+    @classmethod
+    def from_data(cls, data: Dict[str, Any]):
+        """
+        从字典数据创建标签对象
+        """
+        return cls(
+            id=data.get("id"),
+            tag_name=data.get("tag_name"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+        )
 
 
 @dataclass(init=True, repr=False, order=False, unsafe_hash=True, frozen=False)
@@ -22,17 +50,34 @@ class Hole:
     """树洞类型（目前已知仅有：`text` 和 `image` 两种类型）"""
     text: Optional[str] = None
     """树洞文本内容"""
-    url: Optional[str] = None
-    """树洞图片链接（仅当 `type` 为 `image` 时非空）"""
+    image_size: Optional[Tuple[int, int]] = None
+    """树洞图片大小（仅当 `type` 为 `image` 时非零）"""
+    extra: Optional[int] = None
+    """树洞额外信息（暂不确定其具体含义，可能为带图的洞额外计数）"""
+
+    tag: Optional[str] = None
+    """树洞标签"""
+    label: Optional[int] = None
+    """树洞标签分类"""
+    label_info: Optional[Label] = None
+    """树洞标签信息"""
 
     reply: Optional[int] = None
     """树洞回复数"""
     likenum: Optional[int] = None
     """树洞关注数"""
-    tag: Optional[str] = None
-    """树洞标签"""
-    extra: Optional[int] = None
-    """树洞额外信息（暂不确定其具体含义，可能为带图的洞额外计数）"""
+    anonymous: Optional[int] = None
+    """树洞是否匿名（暂不确定）"""
+    status: Optional[int] = None
+    """树洞状态（暂不确定）"""
+    is_top: Optional[int] = None
+    """树洞是否置顶（暂不确定）"""
+    is_comment: Optional[int] = None
+    """树洞是否可评论（暂不确定）"""
+    is_follow: Optional[int] = None
+    """树洞是否已关注（暂不确定）"""
+    is_protect: Optional[int] = None
+    """树洞是否被保护（暂不确定）"""
 
     @classmethod
     def from_data(cls, data: Dict[str, Any]):
@@ -40,15 +85,25 @@ class Hole:
         从字典数据创建树洞对象
         """
         return cls(
-            pid=int(data["pid"]),
-            text=data["text"],
-            timestamp=int(data["timestamp"]),
-            reply=int(data["reply"]),
-            likenum=int(data["likenum"]),
-            type=data["type"],
-            extra=int(data["extra"]),
-            url=data["url"],
-            tag=data["tag"],
+            pid=data.get("pid"),
+            timestamp=data.get("timestamp"),
+            type=data.get("type"),
+            text=data.get("text"),
+            image_size=tuple(data.get("image_size", (0, 0))),
+            extra=data.get("extra"),
+            tag=data.get("tag"),
+            label=data.get("label"),
+            label_info=Label.from_data(data.get("label_info", {}))
+            if data.get("label_info")
+            else None,
+            reply=data.get("reply"),
+            likenum=data.get("likenum"),
+            anonymous=data.get("anonymous"),
+            status=data.get("status"),
+            is_top=data.get("is_top"),
+            is_comment=data.get("is_comment"),
+            is_follow=data.get("is_follow"),
+            is_protect=data.get("is_protect"),
         )
 
     def __repr__(self):
@@ -86,7 +141,9 @@ class Comment:
     """回复标签"""
     # TODO: Figure out the meaning of following field
     anonymous: Optional[int] = None
-    """是否为匿名回复（0 为否，1 为是）"""
+    """是否为匿名回复（暂不确定）"""
+    hidden: Optional[int] = None
+    """是否为隐藏回复（暂不确定）"""
 
     @classmethod
     def from_data(cls, data: Dict[str, Any]):
@@ -94,14 +151,14 @@ class Comment:
         从字典数据创建回复对象
         """
         return cls(
-            cid=int(data["cid"]),
-            pid=int(data["pid"]),
-            text=data["text"],
-            timestamp=int(data["timestamp"]),
-            tag=data["tag"],
-            islz=int(data["islz"]),
-            name=data["name"],
-            anonymous=int(data["anonymous"]),
+            cid=data.get("cid"),
+            pid=data.get("pid"),
+            text=data.get("text"),
+            timestamp=data.get("timestamp"),
+            tag=data.get("tag"),
+            islz=data.get("islz"),
+            name=data.get("name"),
+            anonymous=data.get("anonymous"),
         )
 
     def __repr__(self):
@@ -113,65 +170,6 @@ class Comment:
         回复数据转字典
         """
         return self.__dict__
-
-
-@dataclass(init=True, repr=False, order=False, unsafe_hash=True, frozen=False)
-class ListHole(Hole):
-    """
-    树洞数据模型（来自首页）
-    """
-
-    hidden: Optional[int] = None
-    """树洞是否被隐藏（0 为否，1 为是）"""
-    hot: Optional[int] = None
-    """热门时间戳（不确定，似乎总与 timestamp 一致）"""
-
-    @classmethod
-    def from_data(cls, data: Dict[str, Any]):
-        """
-        从字典数据创建树洞对象
-        """
-        return cls(
-            pid=int(data["pid"]),
-            text=data["text"],
-            timestamp=int(data["timestamp"]),
-            reply=int(data["reply"]),
-            likenum=int(data["likenum"]),
-            type=data["type"],
-            extra=int(data["extra"]),
-            url=data["url"],
-            tag=data["tag"],
-            hidden=int(data["hidden"]),
-            hot=int(data["hot"]),
-        )
-
-
-@dataclass(init=True, repr=False, order=False, unsafe_hash=True, frozen=False)
-class AttentionHole(Hole):
-    """
-    树洞数据模型（来自关注）
-    """
-
-    attention_tag: Optional[str] = None
-    """关注标签（暂不确定其具体含义）"""
-
-    @classmethod
-    def from_data(cls, data: Dict[str, Any]):
-        """
-        从字典数据创建树洞对象
-        """
-        return cls(
-            pid=int(data["pid"]),
-            text=data["text"],
-            timestamp=int(data["timestamp"]),
-            reply=int(data["reply"]),
-            likenum=int(data["likenum"]),
-            type=data["type"],
-            extra=int(data["extra"]),
-            url=data["url"],
-            tag=data["tag"],
-            attention_tag=data["attention_tag"],
-        )
 
 
 class UserNameMeta(type):
@@ -299,11 +297,3 @@ class UserName(metaclass=UserNameMeta):
     UserName["You Win 1234"]  # 1234
     ```
     """
-
-
-GenericHole = TypeVar("GenericHole", Hole, ListHole, AttentionHole)
-"""
-泛树洞类型
-
-用于标记函数的参数类型，表示该函数可以接受任意类型的树洞。
-"""

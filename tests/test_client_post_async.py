@@ -15,24 +15,18 @@ client = TreeHoleClient(secrets["token"])
 # Cause this is a long-dead hole
 @pytest.mark.asyncio
 async def test_post_comment_async():
-    assert await client.post_comment_async(3075815, "Test comment", reply_to="alice")
+    assert await client.post_comment_async(33171, "Test comment", reply_to="alice")
 
 
 # Absolutely safe to run
 @pytest.mark.asyncio
 async def test_post_attention_async():
     pid = 3153214
-    success, attention = await client.post_toggle_attention_async(pid)
+    success, attention = await client.post_toggle_followed_async(pid)
     assert success
     assert attention is not None
-    if attention:
-        assert client.post_remove_attention(pid)
-        assert client.post_set_attention(pid)
-    else:
-        assert client.post_set_attention(pid)
-        assert client.post_remove_attention(pid)
     # Run it again to set it back to the original state
-    assert client.post_toggle_attention(pid)[0]
+    assert (await client.post_toggle_followed_async(pid))[0]
 
 
 # Do not run this unit test !!!!
