@@ -1,7 +1,7 @@
-from treehole import TreeHoleClient
+from treehole import TreeHoleClient, Hole
 
 token = input("Input token: ")
-if len(token) != 32:
+if not len(token):
     try:
         import json
 
@@ -12,20 +12,18 @@ if len(token) != 32:
         exit(1)
 
 
-def img_filter(hole):
-    return len(hole.url) > 0
+def img_filter(hole: Hole):
+    return hole.type == "image"
 
 
 client = TreeHoleClient(token)
 idx = 1
-holes, _ = client.get_holes(idx)
+holes = client.get_holes(idx)
 while not holes:
     print("No holes found, trying next page...")
     idx += 1
-    holes, _ = client.get_holes(idx)
+    holes = client.get_holes(idx)
 holes_with_image = list(filter(img_filter, holes))
 print(f"Found {len(holes_with_image)} holes with image out of {len(holes)} holes")
-img_urls = [hole.url for hole in holes_with_image]
-print("Image URLs:")
-for url in img_urls:
-    print("\t", url)
+for hole in holes_with_image:
+    print(hole.pid)

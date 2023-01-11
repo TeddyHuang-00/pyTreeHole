@@ -21,7 +21,7 @@ async def consumer(todo_queue: asyncio.Queue, done_queue: asyncio.Queue):
             await asyncio.sleep(1.0)
             continue
         hole_id = await todo_queue.get()
-        hole, _ = await client.get_hole_async(hole_id)
+        hole = await client.get_hole_async(hole_id)
         if hole is not None:
             logger.debug(f"Got hole {hole_id}")
             await done_queue.put(hole)
@@ -38,7 +38,7 @@ async def producer(
     logger.info(f"Producer started at {datetime.datetime.now()}")
     target_timestamp = int(target_time.timestamp())
     logger.debug(f"Targeting time at {target_time}")
-    holes, _ = await client.get_holes_async()
+    holes = await client.get_holes_async()
     assert holes is not None
     logger.info(f"Found {len(holes)} holes")
     assert holes[0].pid
@@ -97,5 +97,8 @@ if __name__ == "__main__":
         main(datetime.datetime.today() - datetime.timedelta(minutes=10))
     )
     json.dump(
-        results, open("tmp.results.json", "w"), ensure_ascii=False, default=lambda x: x.data
+        results,
+        open("tmp.results.json", "w"),
+        ensure_ascii=False,
+        default=lambda x: x.data,
     )
