@@ -20,7 +20,7 @@ A simple interface to PKU Hole
 from treehole import TreeHoleClient
 
 client = TreeHoleClient("your token")
-hole, timestamp = client.get_hole("hole ID")
+hole = client.get_hole("hole ID")
 print(hole)
 ```
 
@@ -29,27 +29,32 @@ print(hole)
 ```python
 from treehole import TreeHoleClient
 
-client = TreeHoleClient(<Your Token>)
+# 使用 token 认证
+client = TreeHoleClient(token=<Your Token>)
+# 使用 IAAA 账号认证
+client = TreeHoleClient(uid=<UID>, password=<Password>)
 # 获取单个树洞
-hole, timestamp = client.get_hole(<Hole ID>)
+hole = client.get_hole(<Hole ID>)
 # 获取树洞评论
-comments, attention = client.get_comment(<Hole ID>)
+comments = client.get_comment(<Hole ID>)
 # 获取首页树洞列表
-holes, timestamp = client.get_holes(<Page Num>)
+holes = client.get_holes(<Page Num>)
 # 获取关注树洞列表
-holes, timestamp = client.get_attention(<Page Num>)
+holes = client.get_followed(<Page Num>)
 # 切换关注状态
-success, attention = client.post_toggle_attention(<Hole ID>)
+success, status = client.post_toggle_followed(<Hole ID>)
 # 发布树洞
-pid = client.post_hole(<Text>, <Image File>)
+success = client.post_hole(<Text>, <Image File>)
 # 发布评论
-pid = client.post_comment(<Hole ID>, <Text>, <Reply To>)
+success = client.post_comment(<Hole ID>, <Text>, <Reply To>)
 # 举报树洞 (!!!!!! 请勿轻易尝试)
-success = client.post_report(<Hole ID>)
+success = client.post_report(<Hole ID>, <Reason>)
 ```
 
 ## Roadmap
 
+- [x] 支持新版树洞
+- [x] 支持 IAAA 账号登陆
 - [x] 树洞数据模型
 - [x] 客户端封装
 - [x] 获取单个树洞
@@ -61,6 +66,7 @@ success = client.post_report(<Hole ID>)
 - [x] 发布树洞
 - [x] 举报树洞
 - [x] 支持异步处理
+- [x] 支持自定义加载长度
 - [ ] 更多功能待补充 ...
 """
 
