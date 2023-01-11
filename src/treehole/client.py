@@ -1,8 +1,8 @@
 """
 树洞客户端，处理收发请求
 """
-from typing import Dict, List, Optional, Tuple, Union
 from functools import cache
+from typing import Dict, List, Optional, Tuple, Union
 
 import aiofiles
 import aiohttp
@@ -10,7 +10,7 @@ import requests
 from requests.compat import urljoin
 
 from .models import Comment, Hole, UserName
-from .utils import EmptyError, logger
+from .utils import AuthError, EmptyError, logger
 
 __all__ = ["TreeHoleClient"]
 
@@ -26,14 +26,20 @@ class TreeHoleClient:
 
     def __init__(
         self,
-        token: str,
+        token: Optional[str] = None,
+        uid: Optional[Union[int, str]] = None,
+        password: Optional[str] = None,
         header: Optional[Dict[str, str]] = None,
         base_param: Optional[Dict[str, str]] = None,
         base_url: Optional[str] = None,
     ) -> None:
         """
         - token:
-            用户 token，可在树洞 cookies 中 pku_token 字段中获取
+            用户 token（可在树洞 cookies 中 pku_token 字段中获取）
+        - uid:
+            IAAA 账号 ID（可选的登录方式）
+        - password:
+            IAAA 账号密码（可选的登录方式）
         - header:
             额外的请求头，可选
         - base_param:
@@ -41,7 +47,16 @@ class TreeHoleClient:
         - base_url:
             其他树洞 API 地址，可选
         """
-        self.__token = token
+        self.__base_url = base_url or BASE_URL
+        if token:
+            self.__token = token
+        elif uid and password:
+            __token = self.__auth(uid, password)
+            if not __token:
+                raise AuthError("Failed to login")
+            self.__token = __token
+        else:
+            raise AuthError("No token or uid and password provided")
         self.__header = {
             **REQUEST_HEADER,
             **{"authorization": "Bearer " + self.__token},
@@ -51,7 +66,35 @@ class TreeHoleClient:
             **BASE_QUERY,
             **(base_param or {}),
         }
-        self.__base_url = base_url or BASE_URL
+
+    def __auth(self, uid: Union[int, str], password: str) -> Optional[str]:
+        """
+        登录，获取 token
+
+        Parameters
+        ----------
+        - uid: IAAA 账号 ID
+        - password: IAAA 账号密码
+
+        Returns
+        -------
+        1. token，登录失败则返回 `None`
+        """
+
+        if not self.__is_num(uid):
+            raise ValueError("uid must be an integer or string of interger")
+        auth_data = {"uid": uid, "password": password}
+        response = requests.post(
+            self.login_url,
+            data=auth_data,
+        )
+        if not self.__is_valid_response(response):
+            return None
+        response_dict = response.json()
+        if not response_dict["success"]:
+            logger.error("Failed to login, response: %s", response_dict)
+            return None
+        return response_dict["data"]["jwt"]
 
     @property
     def token(self) -> str:
@@ -72,6 +115,12 @@ class TreeHoleClient:
     def base_url(self) -> str:
         """请求地址，只读"""
         return self.__base_url
+
+    @property
+    @cache
+    def login_url(self) -> str:
+        """登陆请求地址，只读"""
+        return urljoin(self.base_url, "login/")
 
     @property
     @cache

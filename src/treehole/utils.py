@@ -9,5 +9,9 @@ class EmptyError(Exception):
     """没有数据"""
 
 
+class AuthError(Exception):
+    """认证错误"""
+
+
 logger = logging.getLogger("TreeHole")
 """日志记录器"""
