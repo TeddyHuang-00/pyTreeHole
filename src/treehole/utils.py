@@ -5,10 +5,6 @@
 import logging
 
 
-class CaptchaError(Exception):
-    """用户可能需要验证"""
-
-
 class EmptyError(Exception):
     """没有数据"""
 
