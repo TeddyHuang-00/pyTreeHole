@@ -1,30 +1,37 @@
-from treehole import Hole, ListHole, AttentionHole, Comment, UserName
+from treehole import Hole, Comment, UserName
 
 
 fake_hole = {
-    "pid": "463721894531",
-    "hidden": "0",
+    "pid": 463721894531,
+    "hidden": 0,
     "text": "fake message",
     "type": "text",
-    "timestamp": "546123785",
-    "reply": "0",
-    "likenum": "1",
-    "extra": "0",
+    "timestamp": 546123785,
+    "reply": 0,
+    "likenum": 1,
+    "extra": 0,
     "url": "",
-    "hidden": "0",
-    "hot": "546123785",
     "tag": None,
-    "attention_tag": None,
+    "label": 0,
+    "label_info": None,
+    "anonymous": 1,
+    "is_top": 0,
+    "status": 0,
+    "is_comment": 1,
+    "is_follow": 0,
+    "is_protect": 0,
+    "image_size": [897, 1653],
 }
 
 fake_comment = {
-    "cid": "367219",
-    "pid": "5467123805",
+    "cid": 367219,
+    "pid": 5467123805,
     "text": "[Alice] Hello world",
-    "timestamp": "64712381543",
-    "anonymous": "1",
+    "timestamp": 64712381543,
+    "anonymous": 1,
     "tag": None,
-    "islz": "0",
+    "hidden": 0,
+    "islz": 0,
     "name": "Alice",
 }
 
@@ -33,30 +40,6 @@ def test_hole_from_data():
     """Only for testing type convertion"""
     hole = Hole.from_data(fake_hole)
     assert hole is not None and isinstance(hole, Hole)
-    assert isinstance(hole.pid, int)
-    assert isinstance(hole.timestamp, int)
-    assert isinstance(hole.reply, int)
-    assert isinstance(hole.likenum, int)
-    assert isinstance(hole.extra, int)
-
-
-def test_list_hole_from_data():
-    """Only for testing type convertion"""
-    hole = ListHole.from_data(fake_hole)
-    assert hole is not None and isinstance(hole, ListHole)
-    assert isinstance(hole.pid, int)
-    assert isinstance(hole.timestamp, int)
-    assert isinstance(hole.reply, int)
-    assert isinstance(hole.likenum, int)
-    assert isinstance(hole.extra, int)
-    assert isinstance(hole.hot, int)
-    assert isinstance(hole.hidden, int)
-
-
-def test_attention_hole_from_data():
-    """Only testing type convertion"""
-    hole = AttentionHole.from_data(fake_hole)
-    assert hole is not None and isinstance(hole, AttentionHole)
     assert isinstance(hole.pid, int)
     assert isinstance(hole.timestamp, int)
     assert isinstance(hole.reply, int)

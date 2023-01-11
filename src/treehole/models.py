@@ -3,7 +3,7 @@
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple, Optional, TypeVar, Union
+from typing import Any, Dict, Tuple, Optional, Union
 
 __all__ = ("Hole", "Comment", "UserName")
 
